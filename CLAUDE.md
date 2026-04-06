@@ -45,19 +45,21 @@ DESIGN.md를 반드시 먼저 읽고 UI/스타일 작업에 착수하라.
 | `index.html` | 메인 HTML, 모든 리소스 로드 | — | — |
 | `css/style.css` | 전체 스타일 + 애니메이션 + 반응형 | — | — |
 | `js/storage.js` | localStorage CRUD + 에러 처리 | `window.Storage` | 없음 |
-| `js/menu.js` | 메뉴 추가/삭제/중복체크 | `window.Menu` | Storage |
+| `js/menu.js` | 메뉴 CRUD + 카테고리 + 중복체크 | `window.Menu` | Storage |
 | `js/history.js` | 히스토리 기록 + 가중치 계산 | `window.LunchHistory` | Storage |
 | `js/vote.js` | 투표 집계 + 리셋 | `window.Vote` | Storage |
 | `js/roulette.js` | 휠 렌더링 + 가중치 합산 + 스핀 | `window.Roulette` | Menu, Vote, LunchHistory |
-| `js/app.js` | 탭, 이벤트, 오버레이, 컨페티 | `window.App` | 전체 |
+| `js/app.js` | 탭, 이벤트, 오버레이, 컨페티, 필터, 다크모드 | `window.App` | 전체 |
 
 ## 데이터 모델
 
 | localStorage 키 | 타입 | 설명 |
 |-----------------|------|------|
-| `lunch-roulette-menus` | `[{id, name, createdAt}]` | 메뉴 목록 |
+| `lunch-roulette-menus` | `[{id, name, category, createdAt}]` | 메뉴 목록 (category: 한식/일식/중식/양식/아시안/기타) |
 | `lunch-roulette-votes` | `{menuId: count}` | 현재 라운드 투표 |
 | `lunch-roulette-history` | `[{menuName, date, timestamp}]` | 최대 30일 기록 |
+| `lunch-roulette-filters` | `["한식","일식",...]` | 활성 카테고리 필터 (빈 배열 = 전체) |
+| `lunch-roulette-theme` | `"light"` or `"dark"` | 다크모드 설정 |
 
 ## 가중치 공식
 최종 가중치 = 투표 가중치 x 히스토리 가중치
@@ -87,13 +89,13 @@ git status --porcelain  # 출력 없어야 함
 | [CHANGELOG.md](CHANGELOG.md) | 변경 이력 |
 | [tests/test-plan.md](tests/test-plan.md) | QA 테스트 플랜 |
 
-## V1 vs V2 scope
-| V1 (현재) | V2 (미래) |
+## V2 vs V3 scope
+| V2 (현재) | V3 (미래) |
 |-----------|-----------|
-| 룰렛 + 투표 + 히스토리 | 카테고리 태그 + 필터 |
-| 메뉴 추가/삭제 | 다크모드 |
-| 컨페티 (간단) | 컨페티 (풍성) |
-| localStorage | PWA / 오프라인 (미정) |
+| 룰렛 + 투표 + 히스토리 | 컨페티 (풍성) |
+| 메뉴 추가/삭제 | PWA / 오프라인 (미정) |
+| 카테고리 태그 + 필터 | |
+| 다크모드 | |
 
 ## 하네스 진화 원칙
 - 이 CLAUDE.md는 프로젝트와 함께 진화한다.
