@@ -1,3 +1,11 @@
+# 오늘 뭐 먹지? — 팀 점심 룰렛
+
+## Project
+- Vanilla JS web app, no framework, no backend
+- 6 JS modules (IIFE pattern) loaded via `<script>` tags in dependency order
+- localStorage for persistence, works on `file://`
+- Mobile-first 420px layout
+
 ## Skill routing
 
 When the user's request matches an available skill, ALWAYS invoke it using the Skill
