@@ -9,8 +9,11 @@ window.Roulette = (function() {
   var sectors = [];
   var wheelEl = null;
 
-  function calcWeights() {
-    var menus = Menu.getAll();
+  function calcWeights(filterCategories) {
+    var allMenus = Menu.getAll();
+    var menus = filterCategories && filterCategories.length > 0
+      ? allMenus.filter(function(m) { return filterCategories.indexOf(m.category) !== -1; })
+      : allMenus;
     var allVotes = Vote.getAll();
     var totalVotes = 0;
     var hasAnyVotes = false;
@@ -53,9 +56,9 @@ window.Roulette = (function() {
     return results;
   }
 
-  function buildWheel(container) {
+  function buildWheel(container, filterCategories) {
     wheelEl = container;
-    var weights = calcWeights();
+    var weights = calcWeights(filterCategories);
     if (weights.length === 0) {
       container.style.background = 'var(--border)';
       container.innerHTML = '';
