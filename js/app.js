@@ -3,14 +3,18 @@ window.App = (function() {
 
   var tabBtns, tabContents;
   var wheelContainer, spinBtn, rouletteEmpty;
-  var menuInput, menuAddBtn, menuError, menuList;
+  var menuInput, menuAddBtn, menuError, menuList, menuCategorySelect;
   var voteList, voteCount, voteSpinBtn;
   var historyList, historyEmpty;
   var overlay, resultText, confirmBtn, confettiContainer;
+  var filterChips, filterContainer, themeToggle;
+  var activeFilters = [];
 
   function init() {
     cacheDom();
     bindEvents();
+    loadTheme();
+    loadFilters();
     switchTab(location.hash.slice(1) || 'roulette');
     renderMenuList();
     renderVoteList();
@@ -29,6 +33,7 @@ window.App = (function() {
     menuAddBtn = document.getElementById('menu-add-btn');
     menuError = document.getElementById('menu-error');
     menuList = document.getElementById('menu-list');
+    menuCategorySelect = document.getElementById('menu-category');
     voteList = document.getElementById('vote-list');
     voteCount = document.getElementById('vote-count');
     voteSpinBtn = document.getElementById('vote-spin-btn');
@@ -38,6 +43,9 @@ window.App = (function() {
     resultText = document.getElementById('result-text');
     confirmBtn = document.getElementById('result-confirm-btn');
     confettiContainer = document.getElementById('confetti-container');
+    filterChips = document.querySelectorAll('.filter-chip');
+    filterContainer = document.getElementById('filter-chips');
+    themeToggle = document.getElementById('theme-toggle');
   }
 
   function bindEvents() {
@@ -59,6 +67,24 @@ window.App = (function() {
       setTimeout(handleSpin, 300);
     });
     confirmBtn.addEventListener('click', handleConfirm);
+    filterContainer.addEventListener('click', function(e) {
+      var chip = e.target.closest('.filter-chip');
+      if (!chip) return;
+      var cat = chip.dataset.category;
+      if (cat === 'all') {
+        activeFilters = [];
+      } else {
+        var idx = activeFilters.indexOf(cat);
+        if (idx === -1) activeFilters.push(cat);
+        else activeFilters.splice(idx, 1);
+      }
+      saveFilters();
+      updateFilterChips();
+      renderWheel();
+      renderVoteList();
+      updateSpinButton();
+    });
+    themeToggle.addEventListener('click', toggleTheme);
   }
 
   function switchTab(tabName) {
@@ -74,8 +100,54 @@ window.App = (function() {
     });
   }
 
+  // -- Filters --
+  function loadFilters() {
+    activeFilters = Storage.get('filters', []);
+    updateFilterChips();
+  }
+
+  function saveFilters() {
+    Storage.set('filters', activeFilters);
+  }
+
+  function updateFilterChips() {
+    filterChips.forEach(function(chip) {
+      var cat = chip.dataset.category;
+      if (cat === 'all') {
+        chip.classList.toggle('filter-chip--active', activeFilters.length === 0);
+      } else {
+        chip.classList.toggle('filter-chip--active', activeFilters.indexOf(cat) !== -1);
+      }
+    });
+  }
+
+  function getFilteredMenus() {
+    var menus = Menu.getAll();
+    if (activeFilters.length === 0) return menus;
+    return menus.filter(function(m) { return activeFilters.indexOf(m.category) !== -1; });
+  }
+
+  // -- Dark mode --
+  function toggleTheme() {
+    var html = document.documentElement;
+    var isDark = html.dataset.theme === 'dark';
+    html.dataset.theme = isDark ? '' : 'dark';
+    themeToggle.textContent = isDark ? '🌙' : '☀️';
+    Storage.set('theme', isDark ? 'light' : 'dark');
+  }
+
+  function loadTheme() {
+    var theme = Storage.get('theme', 'light');
+    if (theme === 'dark') {
+      document.documentElement.dataset.theme = 'dark';
+      themeToggle.textContent = '☀️';
+    }
+  }
+
+  // -- Menu Management --
   function addMenu() {
-    var result = Menu.add(menuInput.value);
+    var category = menuCategorySelect ? menuCategorySelect.value : '기타';
+    var result = Menu.add(menuInput.value, category);
     if (result.error) {
       menuError.textContent = result.error;
       menuError.hidden = false;
@@ -105,23 +177,30 @@ window.App = (function() {
       li.className = 'menu-mgmt__item';
       var nameSpan = document.createElement('span');
       nameSpan.textContent = m.name;
+      var tagSpan = document.createElement('span');
+      tagSpan.className = 'category-tag';
+      tagSpan.textContent = m.category;
       var deleteBtn = document.createElement('button');
       deleteBtn.className = 'btn btn--ghost btn--sm';
       deleteBtn.textContent = '삭제';
       deleteBtn.addEventListener('click', function() { removeMenu(m.id); });
       li.appendChild(nameSpan);
+      li.appendChild(tagSpan);
       li.appendChild(deleteBtn);
       menuList.appendChild(li);
     });
   }
 
+  // -- Wheel --
   function renderWheel() {
-    var menus = Menu.getAll();
+    var menus = getFilteredMenus();
     if (menus.length < 2) {
       wheelContainer.style.display = 'none';
       rouletteEmpty.hidden = false;
       if (menus.length === 1) {
         rouletteEmpty.querySelector('p').textContent = '메뉴가 1개뿐이에요. 더 추가하면 재밌어요!';
+      } else if (activeFilters.length > 0) {
+        rouletteEmpty.querySelector('p').textContent = '선택한 카테고리에 메뉴가 없어요';
       } else {
         rouletteEmpty.querySelector('p').textContent = '메뉴를 추가해주세요';
       }
@@ -129,14 +208,15 @@ window.App = (function() {
     }
     wheelContainer.style.display = '';
     rouletteEmpty.hidden = true;
-    Roulette.buildWheel(wheelContainer);
+    Roulette.buildWheel(wheelContainer, activeFilters);
   }
 
   function updateSpinButton() {
-    var menus = Menu.getAll();
+    var menus = getFilteredMenus();
     spinBtn.disabled = menus.length < 2 || Roulette.isSpinning();
   }
 
+  // -- Spin --
   var lastResult = null;
 
   function handleSpin() {
@@ -171,6 +251,7 @@ window.App = (function() {
     renderWheel();
   }
 
+  // -- Confetti --
   function spawnConfetti() {
     confettiContainer.innerHTML = '';
     var colors = ['#FF6B35', '#004E89', '#10B981', '#F59E0B', '#EF4444'];
@@ -188,8 +269,9 @@ window.App = (function() {
     }, 1500);
   }
 
+  // -- Vote UI --
   function renderVoteList() {
-    var menus = Menu.getAll();
+    var menus = getFilteredMenus();
     var allVotes = Vote.getAll();
     var totalVotes = 0;
     menus.forEach(function(m) { totalVotes += (allVotes[m.id] || 0); });
@@ -235,6 +317,7 @@ window.App = (function() {
     });
   }
 
+  // -- History UI --
   function renderHistoryList() {
     var records = LunchHistory.getAll();
     historyList.innerHTML = '';
