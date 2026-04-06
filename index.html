@@ -14,6 +14,7 @@
     <header class="header">
       <h1 class="header__title">오늘 뭐 먹지?</h1>
       <p class="header__subtitle">팀 점심 룰렛</p>
+      <button class="theme-toggle" id="theme-toggle" aria-label="다크모드 토글">🌙</button>
     </header>
 
     <nav class="tabs">
@@ -21,6 +22,15 @@
       <button class="tabs__btn" data-tab="vote">투표</button>
       <button class="tabs__btn" data-tab="history">히스토리</button>
     </nav>
+    <div class="filter-chips" id="filter-chips">
+      <button class="filter-chip filter-chip--active" data-category="all">전체</button>
+      <button class="filter-chip" data-category="한식">한식</button>
+      <button class="filter-chip" data-category="일식">일식</button>
+      <button class="filter-chip" data-category="중식">중식</button>
+      <button class="filter-chip" data-category="양식">양식</button>
+      <button class="filter-chip" data-category="아시안">아시안</button>
+      <button class="filter-chip" data-category="기타">기타</button>
+    </div>
 
     <!-- Roulette Tab -->
     <section class="tab-content" id="tab-roulette">
@@ -39,6 +49,14 @@
         <div class="menu-mgmt__body">
           <div class="menu-mgmt__add">
             <input type="text" class="input" id="menu-input" placeholder="새 메뉴 입력..." maxlength="30">
+            <select class="input input--select" id="menu-category">
+              <option value="기타">기타</option>
+              <option value="한식">한식</option>
+              <option value="일식">일식</option>
+              <option value="중식">중식</option>
+              <option value="양식">양식</option>
+              <option value="아시안">아시안</option>
+            </select>
             <button class="btn btn--ghost" id="menu-add-btn">추가</button>
           </div>
           <div class="menu-mgmt__error" id="menu-error"></div>
