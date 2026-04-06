@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오늘 뭐 먹지? — Design System Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #FF6B35;
+    --primary-hover: #E85A2A;
+    --secondary: #004E89;
+    --secondary-hover: #003D6B;
+    --bg: #FFFBF5;
+    --surface: #FFFFFF;
+    --text: #1A1A2E;
+    --muted: #6B7280;
+    --border: #E5E7EB;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    --info: #3B82F6;
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+    --shadow: 0 2px 8px rgba(26,26,46,0.08);
+    --shadow-lg: 0 8px 24px rgba(26,26,46,0.12);
+  }
+  [data-theme="dark"] {
+    --bg: #1A1A2E;
+    --surface: #242438;
+    --text: #F0F0F5;
+    --muted: #9CA3AF;
+    --border: #374151;
+    --shadow: 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    transition: background 0.3s, color 0.3s;
+  }
+  .container { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+
+  /* Theme toggle */
+  .theme-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 100;
+    padding: 8px 14px; border-radius: var(--radius-full);
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text); font-size: 13px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; box-shadow: var(--shadow);
+  }
+
+  /* Section headers */
+  .section { margin-bottom: 48px; }
+  .section-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--muted); margin-bottom: 16px;
+  }
+
+  /* Hero */
+  .hero {
+    text-align: center; padding: 48px 24px;
+    background: var(--surface); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow); margin-bottom: 48px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-size: 36px; font-weight: 700; margin-bottom: 8px;
+    color: var(--primary);
+  }
+  .hero p { color: var(--muted); font-size: 16px; }
+
+  /* Font specimens */
+  .font-specimen {
+    background: var(--surface); border-radius: var(--radius-md);
+    padding: 24px; margin-bottom: 16px; box-shadow: var(--shadow);
+  }
+  .font-name { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .font-role { font-size: 11px; color: var(--primary); font-weight: 600; margin-bottom: 12px; }
+  .font-display { font-size: 32px; font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
+  .font-body { font-size: 16px; line-height: 1.6; color: var(--text); }
+  .font-data { font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+
+  /* Color swatches */
+  .swatch-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px; margin-bottom: 24px;
+  }
+  .swatch {
+    border-radius: var(--radius-md); overflow: hidden;
+    box-shadow: var(--shadow); background: var(--surface);
+  }
+  .swatch-color { height: 64px; }
+  .swatch-info { padding: 10px 12px; }
+  .swatch-name { font-size: 12px; font-weight: 600; }
+  .swatch-hex { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+
+  /* UI Components */
+  .component-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px; margin-bottom: 24px;
+  }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 12px 24px; border-radius: var(--radius-md);
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    cursor: pointer; border: none; transition: all 0.2s ease;
+  }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+  .btn-secondary { background: var(--secondary); color: white; }
+  .btn-secondary:hover { background: var(--secondary-hover); }
+  .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--surface); border-color: var(--muted); }
+
+  .card {
+    background: var(--surface); border-radius: var(--radius-md);
+    padding: 20px; box-shadow: var(--shadow);
+  }
+  .card-title { font-weight: 600; font-size: 16px; margin-bottom: 8px; }
+  .card-text { font-size: 14px; color: var(--muted); }
+
+  .input {
+    width: 100%; padding: 12px 16px; border: 1px solid var(--border);
+    border-radius: var(--radius-md); font-family: 'DM Sans', sans-serif;
+    font-size: 15px; background: var(--surface); color: var(--text);
+    transition: border-color 0.2s;
+  }
+  .input:focus { outline: none; border-color: var(--primary); }
+
+  .alert {
+    padding: 12px 16px; border-radius: var(--radius-md);
+    font-size: 14px; margin-bottom: 8px;
+  }
+  .alert-success { background: #D1FAE5; color: #065F46; }
+  .alert-warning { background: #FEF3C7; color: #92400E; }
+  .alert-error { background: #FEE2E2; color: #991B1B; }
+  .alert-info { background: #DBEAFE; color: #1E40AF; }
+  [data-theme="dark"] .alert-success { background: #064E3B; color: #6EE7B7; }
+  [data-theme="dark"] .alert-warning { background: #78350F; color: #FCD34D; }
+  [data-theme="dark"] .alert-error { background: #7F1D1D; color: #FCA5A5; }
+  [data-theme="dark"] .alert-info { background: #1E3A5F; color: #93C5FD; }
+
+  /* Product Mockup */
+  .mockup {
+    max-width: 420px; margin: 0 auto;
+    background: var(--bg); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg); overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .mockup-header {
+    text-align: center; padding: 24px 20px 8px;
+    background: var(--surface);
+  }
+  .mockup-header h2 {
+    font-size: 24px; font-weight: 700; color: var(--primary);
+  }
+  .mockup-header p { font-size: 13px; color: var(--muted); }
+  .mockup-tabs {
+    display: flex; margin: 12px 20px 0; border-radius: var(--radius-md);
+    overflow: hidden; border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .mockup-tab {
+    flex: 1; padding: 10px; text-align: center;
+    font-size: 13px; font-weight: 500; color: var(--muted);
+    border-right: 1px solid var(--border); cursor: pointer;
+  }
+  .mockup-tab:last-child { border-right: none; }
+  .mockup-tab.active { background: var(--primary); color: white; font-weight: 600; }
+
+  .mockup-body { padding: 20px; }
+
+  /* Roulette wheel mockup */
+  .roulette-container {
+    width: 240px; height: 240px; margin: 16px auto;
+    position: relative;
+  }
+  .roulette-wheel {
+    width: 100%; height: 100%; border-radius: 50%;
+    background: conic-gradient(
+      #FF6B35 0deg 60deg,
+      #004E89 60deg 120deg,
+      #10B981 120deg 180deg,
+      #F59E0B 180deg 240deg,
+      #EF4444 240deg 300deg,
+      #8B5CF6 300deg 360deg
+    );
+    box-shadow: var(--shadow-lg), inset 0 0 0 4px rgba(255,255,255,0.3);
+    animation: slowSpin 20s linear infinite;
+    position: relative;
+  }
+  @keyframes slowSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .roulette-center {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--surface); box-shadow: var(--shadow);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; color: var(--text);
+    z-index: 2;
+  }
+  .roulette-pointer {
+    position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+    font-size: 24px; color: var(--primary); z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  }
+
+  .spin-btn {
+    display: block; width: 100%; padding: 16px;
+    background: var(--primary); color: white;
+    border: none; border-radius: var(--radius-md);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px; font-weight: 700;
+    cursor: pointer; margin-top: 16px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255,107,53,0.3);
+  }
+  .spin-btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,107,53,0.4); }
+
+  /* Vote mockup */
+  .vote-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .vote-label { width: 72px; font-size: 14px; font-weight: 500; }
+  .vote-bar-bg { flex: 1; height: 28px; background: var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .vote-bar-fill { height: 100%; border-radius: var(--radius-sm); transition: width 0.5s ease; }
+  .vote-count { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); width: 24px; text-align: right; }
+  .vote-btn {
+    padding: 4px 10px; border: 1px solid var(--secondary);
+    border-radius: var(--radius-sm); background: transparent;
+    color: var(--secondary); font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+  }
+  .vote-btn:hover { background: var(--secondary); color: white; }
+
+  /* Spacing scale */
+  .spacing-demo { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
+  .spacing-block {
+    background: var(--primary); border-radius: 4px; opacity: 0.7;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .spacing-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: white; }
+
+  /* Motion demo */
+  .motion-demo {
+    display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px;
+  }
+  .motion-box {
+    width: 80px; height: 80px; border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: white; cursor: pointer;
+  }
+  .motion-box.bounce { background: var(--primary); }
+  .motion-box.bounce:hover { animation: bounceIn 0.5s ease; }
+  @keyframes bounceIn {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.15); }
+    60% { transform: scale(0.95); }
+    80% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  .motion-box.slide { background: var(--secondary); }
+  .motion-box.slide:hover { animation: slideUp 0.4s ease-out; }
+  @keyframes slideUp {
+    0% { transform: translateY(8px); opacity: 0.5; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  .motion-box.spin-demo { background: var(--success); }
+  .motion-box.spin-demo:hover { animation: spinOnce 0.8s cubic-bezier(0.17,0.67,0.12,0.99); }
+  @keyframes spinOnce { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .divider { height: 1px; background: var(--border); margin: 48px 0; }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">Light / Dark</button>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>오늘 뭐 먹지?</h1>
+    <p>팀 점심 룰렛 — Design System Preview</p>
+  </div>
+
+  <!-- Typography -->
+  <div class="section">
+    <div class="section-title">Typography</div>
+
+    <div class="font-specimen">
+      <div class="font-name">Cabinet Grotesk (simulated with DM Sans Bold)</div>
+      <div class="font-role">Display / Hero</div>
+      <div class="font-display" style="color: var(--primary);">오늘 뭐 먹지?</div>
+      <div class="font-display" style="font-size:24px;">팀 점심 룰렛으로 결정하세요</div>
+    </div>
+
+    <div class="font-specimen">
+      <div class="font-name">DM Sans</div>
+      <div class="font-role">Body Text</div>
+      <div class="font-body">매일 점심마다 "뭐 먹지?"로 시간을 낭비하지 마세요. 메뉴를 등록하고, 팀원들과 투표하고, 룰렛을 돌려서 오늘의 점심을 결정하세요. 최근에 먹은 메뉴는 자동으로 가중치가 낮아져서 "또 짜장면?" 걱정 없습니다.</div>
+    </div>
+
+    <div class="font-specimen">
+      <div class="font-name">JetBrains Mono</div>
+      <div class="font-role">Data / Numbers</div>
+      <div class="font-data">
+        김치찌개: 3표 (37.5%) | 라멘: 2표 (25.0%) | 파스타: 1표 (12.5%)<br>
+        히스토리: 2026-04-06 김치찌개 | 2026-04-05 라멘 | 2026-04-04 파스타
+      </div>
+    </div>
+  </div>
+
+  <!-- Colors -->
+  <div class="section">
+    <div class="section-title">Color Palette</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#FF6B35"></div><div class="swatch-info"><div class="swatch-name">Primary</div><div class="swatch-hex">#FF6B35</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#004E89"></div><div class="swatch-info"><div class="swatch-name">Secondary</div><div class="swatch-hex">#004E89</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#FFFBF5; border-bottom: 1px solid #E5E7EB"></div><div class="swatch-info"><div class="swatch-name">Background</div><div class="swatch-hex">#FFFBF5</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#1A1A2E"></div><div class="swatch-info"><div class="swatch-name">Text</div><div class="swatch-hex">#1A1A2E</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#10B981"></div><div class="swatch-info"><div class="swatch-name">Success</div><div class="swatch-hex">#10B981</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#F59E0B"></div><div class="swatch-info"><div class="swatch-name">Warning</div><div class="swatch-hex">#F59E0B</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#EF4444"></div><div class="swatch-info"><div class="swatch-name">Error</div><div class="swatch-hex">#EF4444</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#6B7280"></div><div class="swatch-info"><div class="swatch-name">Muted</div><div class="swatch-hex">#6B7280</div></div></div>
+    </div>
+  </div>
+
+  <!-- UI Components -->
+  <div class="section">
+    <div class="section-title">UI Components</div>
+    <div class="component-grid">
+      <div class="card">
+        <div class="card-title">Buttons</div>
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:12px;">
+          <button class="btn btn-primary">돌리기!</button>
+          <button class="btn btn-secondary">투표하기</button>
+          <button class="btn btn-ghost">메뉴 관리</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Input</div>
+        <div style="margin-top:12px;">
+          <input class="input" placeholder="새 메뉴 입력..." value="마라탕">
+        </div>
+        <div style="margin-top:12px;">
+          <div class="alert alert-success">김치찌개가 선정되었습니다!</div>
+          <div class="alert alert-warning">메뉴가 1개뿐이에요</div>
+          <div class="alert alert-error">메뉴를 추가해주세요</div>
+          <div class="alert alert-info">3명 참여 중</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Product Mockup: Roulette -->
+  <div class="section">
+    <div class="section-title">Product Mockup — Roulette Screen</div>
+    <div class="mockup">
+      <div class="mockup-header">
+        <h2>오늘 뭐 먹지?</h2>
+        <p>팀 점심 룰렛</p>
+      </div>
+      <div class="mockup-tabs">
+        <div class="mockup-tab active">룰렛</div>
+        <div class="mockup-tab">투표</div>
+        <div class="mockup-tab">히스토리</div>
+      </div>
+      <div class="mockup-body">
+        <div class="roulette-container">
+          <div class="roulette-pointer">▼</div>
+          <div class="roulette-wheel"></div>
+          <div class="roulette-center">돌려!</div>
+        </div>
+        <button class="spin-btn">돌리기!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Mockup: Vote -->
+  <div class="section">
+    <div class="section-title">Product Mockup — Vote Screen</div>
+    <div class="mockup">
+      <div class="mockup-header">
+        <h2 style="font-size:18px; color:var(--text);">오늘의 투표</h2>
+        <p>3명 참여 중</p>
+      </div>
+      <div class="mockup-tabs">
+        <div class="mockup-tab">룰렛</div>
+        <div class="mockup-tab active">투표</div>
+        <div class="mockup-tab">히스토리</div>
+      </div>
+      <div class="mockup-body">
+        <div class="vote-item">
+          <span class="vote-label">김치찌개</span>
+          <div class="vote-bar-bg"><div class="vote-bar-fill" style="width:60%; background:var(--primary)"></div></div>
+          <span class="vote-count">3</span>
+          <button class="vote-btn">+1</button>
+        </div>
+        <div class="vote-item">
+          <span class="vote-label">라멘</span>
+          <div class="vote-bar-bg"><div class="vote-bar-fill" style="width:40%; background:var(--secondary)"></div></div>
+          <span class="vote-count">2</span>
+          <button class="vote-btn">+1</button>
+        </div>
+        <div class="vote-item">
+          <span class="vote-label">파스타</span>
+          <div class="vote-bar-bg"><div class="vote-bar-fill" style="width:20%; background:var(--success)"></div></div>
+          <span class="vote-count">1</span>
+          <button class="vote-btn">+1</button>
+        </div>
+        <div class="vote-item">
+          <span class="vote-label">짜장면</span>
+          <div class="vote-bar-bg"><div class="vote-bar-fill" style="width:0%"></div></div>
+          <span class="vote-count">0</span>
+          <button class="vote-btn">+1</button>
+        </div>
+        <button class="spin-btn" style="background:var(--secondary); box-shadow: 0 4px 12px rgba(0,78,137,0.3);">투표 결과로 룰렛 돌리기</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Spacing -->
+  <div class="section">
+    <div class="section-title">Spacing Scale (8px base)</div>
+    <div class="spacing-demo">
+      <div class="spacing-block" style="width:4px; height:4px;" title="2xs: 2px"></div>
+      <div class="spacing-block" style="width:8px; height:8px;" title="xs: 4px"></div>
+      <div class="spacing-block" style="width:16px; height:16px;" title="sm: 8px"><span class="spacing-label">8</span></div>
+      <div class="spacing-block" style="width:32px; height:32px;" title="md: 16px"><span class="spacing-label">16</span></div>
+      <div class="spacing-block" style="width:48px; height:48px;" title="lg: 24px"><span class="spacing-label">24</span></div>
+      <div class="spacing-block" style="width:64px; height:64px;" title="xl: 32px"><span class="spacing-label">32</span></div>
+      <div class="spacing-block" style="width:96px; height:96px;" title="2xl: 48px"><span class="spacing-label">48</span></div>
+    </div>
+  </div>
+
+  <!-- Motion -->
+  <div class="section">
+    <div class="section-title">Motion (hover to preview)</div>
+    <div class="motion-demo">
+      <div class="motion-box bounce">Bounce</div>
+      <div class="motion-box slide">Slide Up</div>
+      <div class="motion-box spin-demo">Spin</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === 'dark' ? '' : 'dark';
+}
+</script>
+</body>
+</html>

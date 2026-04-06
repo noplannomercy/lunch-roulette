@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오늘 뭐 먹지? - Wireframe</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #fafafa;
+    color: #333;
+    padding: 20px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .screen {
+    border: 2px dashed #bbb;
+    border-radius: 12px;
+    padding: 24px 20px;
+    margin-bottom: 32px;
+    background: white;
+    position: relative;
+  }
+  .screen::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -12px;
+    left: 16px;
+    background: #fafafa;
+    padding: 0 8px;
+    font-size: 11px;
+    color: #999;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  h1 { font-size: 24px; text-align: center; margin-bottom: 4px; }
+  .subtitle { text-align: center; color: #999; font-size: 13px; margin-bottom: 20px; }
+  .roulette-area {
+    width: 200px; height: 200px;
+    border: 3px solid #333; border-radius: 50%;
+    margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    background: repeating-conic-gradient(#f0f0f0 0deg 45deg, #e8e8e8 45deg 90deg);
+  }
+  .roulette-area::after { content: "▼"; position: absolute; top: -18px; font-size: 20px; color: #e74c3c; }
+  .roulette-center {
+    font-size: 14px; font-weight: bold; background: white; border-radius: 50%;
+    width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;
+    border: 2px solid #333; text-align: center; line-height: 1.2;
+  }
+  .spin-btn {
+    display: block; width: 100%; padding: 14px;
+    border: 2px solid #333; border-radius: 8px;
+    background: #333; color: white; font-size: 18px; font-weight: bold;
+    cursor: pointer; text-align: center; margin-bottom: 12px;
+  }
+  .menu-list { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+  .menu-item {
+    padding: 10px 14px; border-bottom: 1px solid #eee;
+    display: flex; justify-content: space-between; align-items: center; font-size: 14px;
+  }
+  .menu-item:last-child { border-bottom: none; }
+  .menu-item .tag { font-size: 11px; padding: 2px 8px; border-radius: 12px; background: #f0f0f0; color: #666; }
+  .add-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .add-row input { flex: 1; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+  .add-row button { padding: 10px 16px; border: 1px solid #333; border-radius: 8px; background: white; font-size: 14px; cursor: pointer; }
+  .vote-section { margin-top: 16px; }
+  .vote-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+  .vote-bar { flex: 1; height: 24px; background: #f0f0f0; border-radius: 4px; position: relative; overflow: hidden; }
+  .vote-fill { height: 100%; background: #333; border-radius: 4px; opacity: 0.7; }
+  .vote-label { width: 80px; font-size: 13px; }
+  .vote-count { width: 30px; text-align: right; font-size: 12px; color: #999; }
+  .vote-btn { padding: 4px 10px; border: 1px solid #ddd; border-radius: 6px; background: white; font-size: 12px; cursor: pointer; }
+  .history-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+  .history-date { color: #999; }
+  .tabs { display: flex; gap: 0; margin-bottom: 16px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+  .tab { flex: 1; padding: 10px; text-align: center; font-size: 13px; cursor: pointer; background: white; border-right: 1px solid #ddd; }
+  .tab:last-child { border-right: none; }
+  .tab.active { background: #333; color: white; }
+  .comment { font-size: 11px; color: #aaa; font-style: italic; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<div class="screen" data-label="Screen 1: Roulette (Default)">
+  <h1>오늘 뭐 먹지?</h1>
+  <p class="subtitle">팀 점심 룰렛</p>
+  <div class="tabs">
+    <div class="tab active">룰렛</div>
+    <div class="tab">투표</div>
+    <div class="tab">히스토리</div>
+  </div>
+  <div class="roulette-area">
+    <div class="roulette-center">돌려!</div>
+  </div>
+  <button class="spin-btn">돌리기!</button>
+  <p class="comment"><!-- CSS transform: rotate() + easing. 결과시 컨페티 효과 --></p>
+</div>
+
+<div class="screen" data-label="Screen 2: Menu Management">
+  <h1 style="font-size:18px; text-align:left; margin-bottom:12px;">메뉴 관리</h1>
+  <div class="add-row">
+    <input placeholder="새 메뉴 입력..." value="마라탕">
+    <button>추가</button>
+  </div>
+  <div class="menu-list">
+    <div class="menu-item">김치찌개 <span class="tag">한식</span></div>
+    <div class="menu-item">라멘 <span class="tag">일식</span></div>
+    <div class="menu-item">파스타 <span class="tag">양식</span></div>
+    <div class="menu-item">짜장면 <span class="tag">중식</span></div>
+    <div class="menu-item">쌀국수 <span class="tag">아시안</span></div>
+    <div class="menu-item">샐러드 <span class="tag">기타</span></div>
+  </div>
+</div>
+
+<div class="screen" data-label="Screen 3: Team Vote">
+  <h1 style="font-size:18px; text-align:left; margin-bottom:4px;">오늘의 투표</h1>
+  <p class="subtitle" style="text-align:left;">3명 참여 중</p>
+  <div class="vote-section">
+    <div class="vote-item">
+      <span class="vote-label">김치찌개</span>
+      <div class="vote-bar"><div class="vote-fill" style="width:60%"></div></div>
+      <span class="vote-count">3</span>
+      <button class="vote-btn">+1</button>
+    </div>
+    <div class="vote-item">
+      <span class="vote-label">라멘</span>
+      <div class="vote-bar"><div class="vote-fill" style="width:40%"></div></div>
+      <span class="vote-count">2</span>
+      <button class="vote-btn">+1</button>
+    </div>
+    <div class="vote-item">
+      <span class="vote-label">파스타</span>
+      <div class="vote-bar"><div class="vote-fill" style="width:20%"></div></div>
+      <span class="vote-count">1</span>
+      <button class="vote-btn">+1</button>
+    </div>
+    <div class="vote-item">
+      <span class="vote-label">짜장면</span>
+      <div class="vote-bar"><div class="vote-fill" style="width:0%"></div></div>
+      <span class="vote-count">0</span>
+      <button class="vote-btn">+1</button>
+    </div>
+  </div>
+  <button class="spin-btn" style="margin-top:16px;">투표 결과로 룰렛 돌리기</button>
+  <p class="comment"><!-- 투표 많은 메뉴 = 룰렛 영역 넓음 --></p>
+</div>
+
+<div class="screen" data-label="Screen 4: History">
+  <h1 style="font-size:18px; text-align:left; margin-bottom:12px;">먹은 기록</h1>
+  <div class="history-item"><span>김치찌개</span><span class="history-date">2026-04-05 (토)</span></div>
+  <div class="history-item"><span>라멘</span><span class="history-date">2026-04-04 (금)</span></div>
+  <div class="history-item"><span>파스타</span><span class="history-date">2026-04-03 (목)</span></div>
+  <div class="history-item"><span>짜장면</span><span class="history-date">2026-04-02 (수)</span></div>
+  <div class="history-item"><span>쌀국수</span><span class="history-date">2026-04-01 (화)</span></div>
+  <p class="comment"><!-- 최근 먹은 메뉴는 룰렛 가중치 낮춤 --></p>
+</div>
+
+</body>
+</html>
