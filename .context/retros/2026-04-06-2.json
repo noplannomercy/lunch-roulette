@@ -1,0 +1,24 @@
+{
+  "date": "2026-04-06",
+  "window": "session",
+  "scope": "full-session-v1-and-v2",
+  "metrics": {
+    "commits": 21,
+    "contributors": 1,
+    "prs_merged": 0,
+    "prs_created": 2,
+    "insertions": 1650,
+    "deletions": 120,
+    "net_loc": 1530,
+    "test_loc": 0,
+    "test_ratio": 0,
+    "active_minutes": 61,
+    "sessions": 2,
+    "feat_pct": 0.57,
+    "docs_pct": 0.29,
+    "fix_pct": 0.0,
+    "ai_assisted_commits": 21
+  },
+  "version_range": ["0.0.0", "0.2.0.0"],
+  "tweetable": "Apr 6: 21 commits, 1.5k LOC, 0→v0.2.0 in 61 min | 2 PRs | 15+ gstack skills | 0 bugs"
+}

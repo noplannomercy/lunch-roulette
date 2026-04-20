@@ -1,4 +1,72 @@
 window.Menu = (function() {
   'use strict';
-  return { getAll: function(){ return []; }, add: function(){}, remove: function(){}, exists: function(){} };
+
+  var STORAGE_KEY = 'menus';
+  var CATEGORIES = ['한식','일식','중식','양식','아시안','기타'];
+  var menus = Storage.get(STORAGE_KEY, []);
+
+  var migrated = false;
+  menus.forEach(function(m) {
+    if (!m.category) {
+      m.category = '기타';
+      migrated = true;
+    }
+  });
+  if (migrated) Storage.set(STORAGE_KEY, menus);
+
+  function save() {
+    Storage.set(STORAGE_KEY, menus);
+  }
+
+  function generateId() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+    return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+  }
+
+  function getAll() {
+    return menus.slice();
+  }
+
+  function exists(name) {
+    var trimmed = name.trim().toLowerCase();
+    return menus.some(function(m) { return m.name.toLowerCase() === trimmed; });
+  }
+
+  function add(name, category) {
+    var trimmed = (name || '').trim();
+    if (!trimmed) {
+      return { error: '메뉴명을 입력하세요' };
+    }
+    if (exists(trimmed)) {
+      return { error: '이미 있는 메뉴입니다' };
+    }
+    var cat = category && CATEGORIES.indexOf(category) !== -1 ? category : '기타';
+    var menu = {
+      id: generateId(),
+      name: trimmed,
+      category: cat,
+      createdAt: new Date().toISOString()
+    };
+    menus.push(menu);
+    save();
+    return { menu: menu };
+  }
+
+  function remove(id) {
+    var index = menus.findIndex(function(m) { return m.id === id; });
+    if (index === -1) return false;
+    menus.splice(index, 1);
+    save();
+    return true;
+  }
+
+  return {
+    getAll: getAll,
+    add: add,
+    remove: remove,
+    exists: exists,
+    CATEGORIES: CATEGORIES
+  };
 })();
